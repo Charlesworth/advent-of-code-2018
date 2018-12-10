@@ -2,7 +2,7 @@ from enum import Enum
 from datetime import datetime
 from collections import Counter
 
-print("Advent of Code: Day 4 Part 1")
+print("Advent of Code: Day 4 Part 2")
 
 class guard_action(Enum):
     BEGIN_SHIFT = 0
