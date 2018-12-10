@@ -31,39 +31,33 @@ def main():
     guard_time_lines.sort(key=lambda l: get_time(l))
 
     guards_total_sleep = dict()
-    minute_counter = Counter()
-    # for each gaurd create a 0 - 60 dict or list[0 -> 60]
-    # go through each line, parse it and add it to the right ^
-    # go through the finished ^ and pick the right one
+    guards_sleep_counter = dict()
+
     for guard_time_line in guard_time_lines:
-        # guard_total_sleep
         action = get_guard_action(guard_time_line)
+
         if action == guard_action.BEGIN_SHIFT:
             current_guard = get_guard_number(guard_time_line)
             if current_guard not in guards_total_sleep:
                 guards_total_sleep[current_guard] = 0
+                guards_sleep_counter[current_guard] = Counter()
 
-        # TODO may need to remove the second
-        if action == guard_action.FALL_ASLEEP:
+        elif action == guard_action.FALL_ASLEEP:
             start_sleep_time = get_time(guard_time_line).minute
 
-        if action == guard_action.WAKE_UP:
+        elif action == guard_action.WAKE_UP:
             end_sleep_time = get_time(guard_time_line).minute
             guards_total_sleep[current_guard] += end_sleep_time - start_sleep_time
+            count = guards_sleep_counter[current_guard]
+            for minute in range(start_sleep_time, end_sleep_time):
+                count[minute] += 1
+            guards_sleep_counter[current_guard] = count
 
-
-        # print(guard_time_line)
-        # print(get_time(guard_time_line))
-        # action = get_guard_action(guard_time_line)
-        # print(action.name)
-        # if action == guard_action.BEGIN_SHIFT:
-            # print(get_guard_number(guard_time_line))
-
-    # for guard_time_line in guard_time_lines:
-        # print(parse(guard_time_line))
-
+    
     most_asleep_guard = max(guards_total_sleep, key=guards_total_sleep.get)
-    print(most_asleep_guard)
+    most_asleep_minute = guards_sleep_counter[most_asleep_guard].most_common(1)[0][0]
+    
+    print(int(most_asleep_minute) * int(most_asleep_guard)) 
 
     return 0
 
